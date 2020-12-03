@@ -68,6 +68,26 @@ namespace Pogram
             invaders.Add(new Invader(550, 20));
             invaders.Add(new Invader(600, 20));
 
+            invaders.Add(new Invader(200, 60));
+            invaders.Add(new Invader(250, 60));
+            invaders.Add(new Invader(300, 60));
+            invaders.Add(new Invader(350, 60));
+            invaders.Add(new Invader(400, 60));
+            invaders.Add(new Invader(450, 60));
+            invaders.Add(new Invader(500, 60));
+            invaders.Add(new Invader(550, 60));
+            invaders.Add(new Invader(600, 60));
+
+            invaders.Add(new Invader(200, 100));
+            invaders.Add(new Invader(250, 100));
+            invaders.Add(new Invader(300, 100));
+            invaders.Add(new Invader(350, 100));
+            invaders.Add(new Invader(400, 100));
+            invaders.Add(new Invader(450, 100));
+            invaders.Add(new Invader(500, 100));
+            invaders.Add(new Invader(550, 100));
+            invaders.Add(new Invader(600, 100));
+
 
 
 
@@ -157,7 +177,7 @@ namespace Pogram
 
                 for (int i = 0; i < bullets.Count; i++)
                 {
-                    bullets[i] = new Rectangle(bullets[i].x, bullets[i].y - 5, 5, 5);
+                    bullets[i] = new Rectangle(bullets[i].x, bullets[i].y - 7, 5, 5);
 
                 }
 
