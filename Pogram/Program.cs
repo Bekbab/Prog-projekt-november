@@ -25,17 +25,18 @@ namespace Pogram
             enemyrect.x += speed;
 
 
-            if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200) && speed > 2)
+            if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200))
             {
+                if (Math.Abs(speed) < 3)
+                {
+                    speed *= 1.1f;
+                }
                 speed = -speed;
-                enemyrect.y += 10;
+                enemyrect.y += 20;
+
             }
-            else if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200) && speed < 2)
-            {
-                speed *= 1.1f;
-                speed = -speed;
-                enemyrect.y += 10;
-            }
+
+            Raylib.DrawText(speed.ToString(), 500, 0, 32, Color.WHITE);
         }
 
 
