@@ -24,7 +24,13 @@ namespace Pogram
         {
             enemyrect.x += speed;
 
-            if (enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200)
+
+            if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200) && speed > 2)
+            {
+                speed = -speed;
+                enemyrect.y += 10;
+            }
+            else if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200) && speed < 2)
             {
                 speed *= 1.1f;
                 speed = -speed;
@@ -38,7 +44,7 @@ namespace Pogram
 
 
 
-    //Få så att en hel lista med invaders kommer att bli till ett mönster så som i originalet. G
+
     //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
     //gör ett gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett gunship så får man mycket points, men det respawnar lite senare.
 
@@ -50,7 +56,7 @@ namespace Pogram
             Raylib.InitWindow(800, 600, "Spelgrej");
             float playerx = 375;
             float playery = 550;
-            float playerspeed = 7f;
+            float playerspeed = 4f;
             float BulletX = playerx;
             float BulletY = playery;
             //score
@@ -125,6 +131,8 @@ namespace Pogram
                     {
                         invader.Update();
                     }
+
+
 
                     //detta gör att när en bullet nuddar en enemy så går den till listan bulletstoremove där den tas bort. Det gör även att enemyn försvinner. 
                     List<Rectangle> bulletsToRemove = new List<Rectangle>();
