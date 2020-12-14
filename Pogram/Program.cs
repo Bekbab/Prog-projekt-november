@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Raylib_cs;
+using System.Numerics;
 
 
 namespace Pogram
@@ -69,6 +70,10 @@ namespace Pogram
             List<Rectangle> bullets = new List<Rectangle>();
             List<Invader> invaders = new List<Invader>();
 
+            Font f1 = Raylib.LoadFont("PaladinsLaser-BERx.otf");
+            Font f2 = Raylib.LoadFont("Revamped-X3q1a.ttf");
+
+
 
 
 
@@ -112,8 +117,15 @@ namespace Pogram
 
 
                 if (currentRoom == 0)
-                {
-                    Raylib.DrawText("Welcome to astro attackers", 200, 200, 20, Color.GREEN);
+                {   //Mäter textens bredd och höjd
+                    Vector2 titleSize = Raylib.MeasureTextEx(f1, "Astro Attackers", 50, 0);
+                    //Text ritas centrerad
+                    Raylib.DrawTextEx(f1, "Astro Attackers", new Vector2(400 - titleSize.X / 2, 140), 50, 0, Color.GREEN);
+
+                    Vector2 textSize = Raylib.MeasureTextEx(f2, "press enter to start playing", 20, 0);
+                    Raylib.DrawTextEx(f2, "press enter to start playing", new Vector2(400 - textSize.X / 2, 200), 20, 0, Color.GREEN);
+
+
                     if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
                     {
                         currentRoom = 1;
@@ -127,14 +139,14 @@ namespace Pogram
                     Rectangle Player = new Rectangle(playerx, playery, 50, 30);
 
 
-                    //Invaders rör på sig
+                    //Varje gång update körs så rör invaders på sig
                     foreach (var invader in invaders)
                     {
                         invader.Update();
                     }
 
 
-
+                    //Bullet physics
                     //detta gör att när en bullet nuddar en enemy så går den till listan bulletstoremove där den tas bort. Det gör även att enemyn försvinner. 
                     List<Rectangle> bulletsToRemove = new List<Rectangle>();
 
@@ -173,13 +185,13 @@ namespace Pogram
 
 
 
-                    //Bullet physics
+
+
+
 
 
 
                     //Player movement
-
-
 
                     if (Raylib.IsKeyDown(KeyboardKey.KEY_D))
                     {
