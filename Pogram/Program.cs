@@ -7,16 +7,22 @@ using System.Numerics;
 namespace Pogram
 {
 
+    class PlayerCharacter
+    {
+        public bool gameOver = false;
+    }
     class Invader
     {
         public bool killed = false;
         public float originalX;
+        public float originalY;
         public float speed = 0.8f;
         public Rectangle enemyrect;
 
         public Invader(int x, int y)
         {
             this.originalX = x;
+            this.originalY = y;
             this.enemyrect = new Rectangle(x, y, 30, 20);
 
         }
@@ -37,9 +43,9 @@ namespace Pogram
 
             }
 
+
             Raylib.DrawText(speed.ToString(), 500, 0, 32, Color.WHITE);
         }
-
 
 
     }
@@ -47,6 +53,7 @@ namespace Pogram
 
 
 
+    //gör så att när gameover = true så går man till game over, game over blir om invader kolliderar med player.y bla. 
     //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
     //gör ett gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett gunship så får man mycket points, men det respawnar lite senare.
 
@@ -91,20 +98,18 @@ namespace Pogram
 
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
             int currentRoom = 0;
+
+
             Raylib.SetTargetFPS(60);
+
+            //laddar bagrunder
+
+            Texture2D spaceImage = Raylib.LoadTexture(@"bilder/space.png");
+            Texture2D starsImage = Raylib.LoadTexture(@"bilder/stars.png");
+
+            //Image spaceImage = Raylib.LoadImage(@"bilder/space.png");
+            //Image starsImage = Raylib.LoadImage(@"bilder/stars.png");
 
             //main gameloop
             while (!Raylib.WindowShouldClose())
@@ -112,12 +117,13 @@ namespace Pogram
 
 
                 Raylib.BeginDrawing();
-                Raylib.ClearBackground(Color.GRAY);
-
-
 
                 if (currentRoom == 0)
-                {   //Mäter textens bredd och höjd
+                {
+                    //Bakgrunden ritas, är nu bakgrund 1
+                    Raylib.DrawTexture(spaceImage, 0, 0, Color.WHITE);
+
+                    //Mäter textens bredd och höjd
                     Vector2 titleSize = Raylib.MeasureTextEx(f1, "Astro Attackers", 50, 0);
                     //Text ritas centrerad
                     Raylib.DrawTextEx(f1, "Astro Attackers", new Vector2(400 - titleSize.X / 2, 140), 50, 0, Color.GREEN);
@@ -135,6 +141,9 @@ namespace Pogram
                 //spelrum
                 else if (currentRoom == 1)
                 {
+                    //bakgrunden ritas
+                    Raylib.DrawTexture(starsImage, 0, 0, Color.WHITE);
+
                     //spelaren ritas
                     Rectangle Player = new Rectangle(playerx, playery, 50, 30);
 
@@ -236,7 +245,7 @@ namespace Pogram
 
                     for (int i = 0; i < bullets.Count; i++)
                     {
-                        Raylib.DrawRectangleRec(bullets[i], Color.BLACK);
+                        Raylib.DrawRectangleRec(bullets[i], Color.RED);
 
                     }
 
@@ -249,9 +258,10 @@ namespace Pogram
 
 
                 }
+                //game over rum
                 else if (currentRoom == 2)
                 {
-                    // Kod för rum 2
+
                 }
                 Raylib.EndDrawing();
 
