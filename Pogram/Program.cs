@@ -9,7 +9,7 @@ namespace Pogram
 
     class PlayerCharacter
     {
-        public bool gameOver = false;
+
     }
     class Invader
     {
@@ -18,7 +18,7 @@ namespace Pogram
         public float originalY;
         public float speed = 0.8f;
         public Rectangle enemyrect;
-
+        public bool gameOver = false;
         public Invader(int x, int y)
         {
             this.originalX = x;
@@ -42,7 +42,6 @@ namespace Pogram
                 enemyrect.y += 20;
 
             }
-
 
             Raylib.DrawText(speed.ToString(), 500, 0, 32, Color.WHITE);
         }
@@ -178,12 +177,24 @@ namespace Pogram
 
                     }
 
+
+
                     foreach (Rectangle bullet in bulletsToRemove)
                     {
                         bullets.Remove(bullet);
                     }
                     bulletsToRemove.Clear();
 
+
+
+                    //När invaders har kommit ned till player så går det över till game over rummet 2
+                    foreach (var invader in invaders)
+                    {
+                        if (invader.enemyrect.y > playery - Player.height)
+                        {
+                            currentRoom = 2;
+                        }
+                    }
 
 
 
@@ -258,10 +269,15 @@ namespace Pogram
 
 
                 }
+
                 //game over rum
+                //Fixa detta
                 else if (currentRoom == 2)
                 {
+                    Raylib.DrawTexture(spaceImage, 0, 0, Color.WHITE);
 
+                    Vector2 textSize = Raylib.MeasureTextEx(f2, "Game over", 100, 0);
+                    Raylib.DrawTextEx(f2, "Game over", new Vector2(400 - textSize.X / 2, 200), 100, 0, Color.RED);
                 }
                 Raylib.EndDrawing();
 
