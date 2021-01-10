@@ -52,7 +52,7 @@ namespace Pogram
 
 
 
-    //gör så att när gameover = true så går man till game over, game over blir om invader kolliderar med player.y bla. 
+
     //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
     //gör ett gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett gunship så får man mycket points, men det respawnar lite senare.
 
@@ -67,8 +67,13 @@ namespace Pogram
             float playerspeed = 4f;
             float BulletX = playerx;
             float BulletY = playery;
+            float GunshipX = 350;
+            float GunshipSpeed = 1f;
             //score
             int InitialScore = 0;
+
+            //Bools
+            bool GunshipIsSpawned = false;
 
             Rectangle Bullet;
 
@@ -124,6 +129,7 @@ namespace Pogram
 
                     //Mäter textens bredd och höjd
                     Vector2 titleSize = Raylib.MeasureTextEx(f1, "Astro Attackers", 50, 0);
+
                     //Text ritas centrerad
                     Raylib.DrawTextEx(f1, "Astro Attackers", new Vector2(400 - titleSize.X / 2, 140), 50, 0, Color.GREEN);
 
@@ -143,8 +149,18 @@ namespace Pogram
                     //bakgrunden ritas
                     Raylib.DrawTexture(starsImage, 0, 0, Color.WHITE);
 
-                    //spelaren ritas
+                    //spelarens dimensioner fastställs
                     Rectangle Player = new Rectangle(playerx, playery, 50, 30);
+
+                    //Gunships dimensioner fastställs
+                    Rectangle Gunship = new Rectangle(GunshipX, 50, 100, 10);
+
+                    //gun 1, 2, 3, och 4 dimensioner fastställs
+                    Rectangle Gun1 = new Rectangle(GunshipX, 70, 10, 20);
+                    Rectangle Gun2 = new Rectangle(GunshipX + 30, 70, 10, 20);
+                    Rectangle Gun3 = new Rectangle(GunshipX + 60, 70, 10, 20);
+                    Rectangle Gun4 = new Rectangle(GunshipX + 90, 70, 10, 20);
+
 
 
                     //Varje gång update körs så rör invaders på sig
@@ -239,6 +255,7 @@ namespace Pogram
 
                     }
 
+
                     //Tar bort alla bullets där y är mindre än noll
                     bullets.RemoveAll(b => b.y < 0);
 
@@ -264,6 +281,41 @@ namespace Pogram
                     {
                         Raylib.DrawRectangleRec(invader.enemyrect, Color.GREEN);
                     }
+
+
+                    //gunship ritas
+                    if (invaders.Count < 1)
+                    {
+                        if (GunshipIsSpawned == false)
+                        {
+                            //gunship ritas
+                            Raylib.DrawRectangleRec(Gunship, Color.GREEN);
+                            Raylib.DrawRectangleRec(Gun1, Color.GREEN);
+                            Raylib.DrawRectangleRec(Gun2, Color.GREEN);
+                            Raylib.DrawRectangleRec(Gun3, Color.GREEN);
+                            Raylib.DrawRectangleRec(Gun4, Color.GREEN);
+
+                            GunshipIsSpawned = true;
+                        }
+                        else if (GunshipIsSpawned == true)
+                        {
+                            if ((GunshipX > 350 || GunshipX < 0))
+                            {
+                                GunshipSpeed = -GunshipSpeed;
+                            }
+
+
+
+                            GunshipX += GunshipSpeed;
+
+
+
+                        }
+
+
+
+                    }
+
 
                     Raylib.DrawRectangleRec(Player, Color.RED);
 
