@@ -153,7 +153,7 @@ namespace Pogram
                     Rectangle Player = new Rectangle(playerx, playery, 50, 30);
 
                     //Gunships dimensioner fastställs
-                    Rectangle Gunship = new Rectangle(GunshipX, 50, 100, 10);
+                    Rectangle Gunship = new Rectangle(GunshipX, 50, 100, 20);
 
                     //gun 1, 2, 3, och 4 dimensioner fastställs
                     Rectangle Gun1 = new Rectangle(GunshipX, 70, 10, 20);
@@ -286,20 +286,20 @@ namespace Pogram
                     //gunship ritas
                     if (invaders.Count < 1)
                     {
-                        if (GunshipIsSpawned == false)
-                        {
-                            //gunship ritas
-                            Raylib.DrawRectangleRec(Gunship, Color.GREEN);
-                            Raylib.DrawRectangleRec(Gun1, Color.GREEN);
-                            Raylib.DrawRectangleRec(Gun2, Color.GREEN);
-                            Raylib.DrawRectangleRec(Gun3, Color.GREEN);
-                            Raylib.DrawRectangleRec(Gun4, Color.GREEN);
 
-                            GunshipIsSpawned = true;
-                        }
-                        else if (GunshipIsSpawned == true)
+
+                        //gunship ritas
+                        Raylib.DrawRectangleRec(Gunship, Color.GREEN);
+                        Raylib.DrawRectangleRec(Gun1, Color.GREEN);
+                        Raylib.DrawRectangleRec(Gun2, Color.GREEN);
+                        Raylib.DrawRectangleRec(Gun3, Color.GREEN);
+                        Raylib.DrawRectangleRec(Gun4, Color.GREEN);
+
+                        GunshipIsSpawned = true;
+
+                        if (GunshipIsSpawned == true)
                         {
-                            if ((GunshipX > 350 || GunshipX < 0))
+                            if ((GunshipX > 700 || GunshipX < 0))
                             {
                                 GunshipSpeed = -GunshipSpeed;
                             }
