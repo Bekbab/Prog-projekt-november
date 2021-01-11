@@ -7,10 +7,7 @@ using System.Numerics;
 namespace Pogram
 {
 
-    class PlayerCharacter
-    {
 
-    }
     class Invader
     {
         public bool killed = false;
@@ -26,23 +23,26 @@ namespace Pogram
             this.enemyrect = new Rectangle(x, y, 30, 20);
 
         }
-        //speed ska ändras lite grann varje gång den åker ned
+
         public void Update()
         {
+            //invaders rör på sig på x axeln
             enemyrect.x += speed;
 
-
+            //när invaders kolliderar med en vägg
             if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200))
             {
+                //Kommer öka speed vid varje kollision så länge den inte är större än 3
                 if (Math.Abs(speed) < 3)
                 {
                     speed *= 1.1f;
                 }
+                //Den hoppar ned ett steg på y axeln och byter håll på x axeln
                 speed = -speed;
                 enemyrect.y += 20;
 
             }
-
+            //För att testa om speed fungerar
             Raylib.DrawText(speed.ToString(), 500, 0, 32, Color.WHITE);
         }
 
@@ -52,7 +52,7 @@ namespace Pogram
 
 
 
-
+    //Fixa GunBullets
     //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
     //gör ett gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett gunship så får man mycket points, men det respawnar lite senare.
 
@@ -60,8 +60,10 @@ namespace Pogram
     {
         static void Main(string[] args)
         {
-
+            //fönstet ritas 800 x 600 stort
             Raylib.InitWindow(800, 600, "Spelgrej");
+
+            //Floats
             float playerx = 375;
             float playery = 550;
             float playerspeed = 4f;
@@ -69,8 +71,12 @@ namespace Pogram
             float BulletY = playery;
             float GunshipX = 350;
             float GunshipSpeed = 1f;
-            //score
+
+            //Ints
             int InitialScore = 0;
+            int gunShoot;
+            //Spelet ska alltid starta med startrummet (0)
+            int currentRoom = 0;
 
             //Bools
             bool GunshipIsSpawned = false;
@@ -87,7 +93,7 @@ namespace Pogram
 
 
 
-
+            //Invaders position fastställs. Koden är skrivit på så sätt att man bara kan ändra siffran efter (i <_) för att ändra hur många rader av invaders det ska vara.
             for (int i = 0; i < 4; i++)
             {
                 invaders.Add(new Invader(200, 20 + i * 40));
@@ -102,18 +108,14 @@ namespace Pogram
 
             }
 
-            int currentRoom = 0;
 
-
+            //Detta sätter en fast framerate. Om man inte har specificerat någon kommer programmet att alltid försöka ha så hög framerate som möjligt
+            //Det kan göra att saker som exempelvis har 1 speed rör sig 1, varje frame, men om frameraten ändras (exempelvis när man rör på muspekaren), så kommer hur snabbt den rör på sig ändras.
             Raylib.SetTargetFPS(60);
 
             //laddar bagrunder
-
             Texture2D spaceImage = Raylib.LoadTexture(@"bilder/space.png");
             Texture2D starsImage = Raylib.LoadTexture(@"bilder/stars.png");
-
-            //Image spaceImage = Raylib.LoadImage(@"bilder/space.png");
-            //Image starsImage = Raylib.LoadImage(@"bilder/stars.png");
 
             //main gameloop
             while (!Raylib.WindowShouldClose())
@@ -122,6 +124,7 @@ namespace Pogram
 
                 Raylib.BeginDrawing();
 
+                //Startrum (0)
                 if (currentRoom == 0)
                 {
                     //Bakgrunden ritas, är nu bakgrund 1
@@ -143,7 +146,7 @@ namespace Pogram
                     }
                 }
 
-                //spelrum
+                //spelrum (1)
                 else if (currentRoom == 1)
                 {
                     //bakgrunden ritas
@@ -155,11 +158,14 @@ namespace Pogram
                     //Gunships dimensioner fastställs
                     Rectangle Gunship = new Rectangle(GunshipX, 50, 100, 20);
 
-                    //gun 1, 2, 3, och 4 dimensioner fastställs
+                    //gun 1, 2, 3, och 4, och bullet dimensioner fastställs
                     Rectangle Gun1 = new Rectangle(GunshipX, 70, 10, 20);
                     Rectangle Gun2 = new Rectangle(GunshipX + 30, 70, 10, 20);
                     Rectangle Gun3 = new Rectangle(GunshipX + 60, 70, 10, 20);
                     Rectangle Gun4 = new Rectangle(GunshipX + 90, 70, 10, 20);
+                    Rectangle GunBullet = new Rectangle(GunshipX + 3, 70, 4, 8);
+
+
 
 
 
@@ -193,8 +199,6 @@ namespace Pogram
 
                     }
 
-
-
                     foreach (Rectangle bullet in bulletsToRemove)
                     {
                         bullets.Remove(bullet);
@@ -203,7 +207,7 @@ namespace Pogram
 
 
 
-                    //När invaders har kommit ned till player så går det över till game over rummet 2
+                    //När invaders har kommit ned till player så går det över till game over rummet (2)
                     foreach (var invader in invaders)
                     {
                         if (invader.enemyrect.y > playery - Player.height)
@@ -241,14 +245,13 @@ namespace Pogram
 
 
 
-
+                    //Spawnar en bullet på mellanslag så länge det inte är mer än 2 ute. 
                     if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE) && bullets.Count < 2)
                     {
                         Bullet = new Rectangle(Player.x + 22, Player.y, 5, 5);
 
                         bullets.Add(Bullet);
                     }
-
                     for (int i = 0; i < bullets.Count; i++)
                     {
                         bullets[i] = new Rectangle(bullets[i].x, bullets[i].y - 6, 5, 5);
@@ -262,7 +265,11 @@ namespace Pogram
                     //Raylib.DrawText($"{bullets.Count}", 8, 8, 21, Color.WHITE);
 
                     //score count
-                    Raylib.DrawText($"{InitialScore}", 8, 8, 21, Color.WHITE);
+
+                    Vector2 scoreSize = Raylib.MeasureTextEx(f2, "Score:", 20, 0);
+
+                    Raylib.DrawTextEx(f2, "Score:", new Vector2(0, 0), 20, 0, Color.WHITE);
+                    Raylib.DrawTextEx(f2, $"{InitialScore}", new Vector2(scoreSize.X, 0), 20, 0, Color.WHITE);
 
 
 
@@ -303,10 +310,16 @@ namespace Pogram
                             {
                                 GunshipSpeed = -GunshipSpeed;
                             }
-
-
-
                             GunshipX += GunshipSpeed;
+
+
+
+
+                            if (gunShoot == 1)
+                            {
+                                Raylib.DrawRectangleRec(GunBullet, Color.GREEN);
+                            }
+
 
 
 
