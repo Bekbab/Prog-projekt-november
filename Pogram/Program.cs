@@ -52,9 +52,9 @@ namespace Pogram
 
 
 
-    //Fixa GunBullets
+    //Fixa gunBullets
     //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
-    //gör ett gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett gunship så får man mycket points, men det respawnar lite senare.
+    //gör ett Gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett Gunship så får man mycket points, men det respawnar lite senare.
 
     class Program
     {
@@ -62,6 +62,10 @@ namespace Pogram
         {
             //fönstet ritas 800 x 600 stort
             Raylib.InitWindow(800, 600, "Spelgrej");
+
+
+            //random generator
+            Random generator = new Random();
 
             //Floats
             float playerx = 375;
@@ -71,24 +75,42 @@ namespace Pogram
             float BulletY = playery;
             float GunshipX = 350;
             float GunshipSpeed = 1f;
+            float GunY = 70;
+            float GunBulletSpeed = 6f;
 
             //Ints
             int InitialScore = 0;
-            int gunShoot;
             //Spelet ska alltid starta med startrummet (0)
             int currentRoom = 0;
+
+
+            //Int gunShoot kommer att slumpas senare så den är separat från resten av alla Ints
+            int gunShoot = 1;
+
+            int gunshipHealth = 10;
+
 
             //Bools
             bool GunshipIsSpawned = false;
 
+            //rectangles
             Rectangle Bullet;
+            Rectangle GunBullet;
 
-
+            //Listor
             List<Rectangle> bullets = new List<Rectangle>();
             List<Invader> invaders = new List<Invader>();
+            List<Rectangle> gunBullets = new List<Rectangle>();
 
+            //Fonts
             Font f1 = Raylib.LoadFont("PaladinsLaser-BERx.otf");
             Font f2 = Raylib.LoadFont("Revamped-X3q1a.ttf");
+
+
+            //timer
+            float timerMax = 1;
+            float timerNow = timerMax;
+
 
 
 
@@ -123,6 +145,9 @@ namespace Pogram
 
 
                 Raylib.BeginDrawing();
+
+
+
 
                 //Startrum (0)
                 if (currentRoom == 0)
@@ -159,12 +184,22 @@ namespace Pogram
                     Rectangle Gunship = new Rectangle(GunshipX, 50, 100, 20);
 
                     //gun 1, 2, 3, och 4, och bullet dimensioner fastställs
-                    Rectangle Gun1 = new Rectangle(GunshipX, 70, 10, 20);
-                    Rectangle Gun2 = new Rectangle(GunshipX + 30, 70, 10, 20);
-                    Rectangle Gun3 = new Rectangle(GunshipX + 60, 70, 10, 20);
-                    Rectangle Gun4 = new Rectangle(GunshipX + 90, 70, 10, 20);
-                    Rectangle GunBullet = new Rectangle(GunshipX + 3, 70, 4, 8);
+                    Rectangle Gun1 = new Rectangle(GunshipX, GunY, 10, 20);
+                    Rectangle Gun2 = new Rectangle(GunshipX + 30, GunY, 10, 20);
+                    Rectangle Gun3 = new Rectangle(GunshipX + 60, GunY, 10, 20);
+                    Rectangle Gun4 = new Rectangle(GunshipX + 90, GunY, 10, 20);
+                    //Rectangle gunBullet = new Rectangle(GunshipX + 3, GunY, 4, 8);
 
+                    //timern börjar köras
+                    timerNow -= Raylib.GetFrameTime();
+
+                    if (timerNow < 0)
+                    {
+                        //slumpar ett tal mellan 1-4
+                        gunShoot = generator.Next(1, 5);
+
+                        timerNow = timerMax;
+                    }
 
 
 
@@ -177,7 +212,7 @@ namespace Pogram
 
 
                     //Bullet physics
-                    //detta gör att när en bullet nuddar en enemy så går den till listan bulletstoremove där den tas bort. Det gör även att enemyn försvinner. 
+                    //detta gör att när en bullet nuddar en enemy så går den till listan stuffToRemove där den tas bort. Det gör även att enemyn försvinner
                     List<Rectangle> bulletsToRemove = new List<Rectangle>();
 
                     foreach (var bullet in bullets)
@@ -290,12 +325,12 @@ namespace Pogram
                     }
 
 
-                    //gunship ritas
+
+                    //Gunship kod
                     if (invaders.Count < 1)
                     {
 
-
-                        //gunship ritas
+                        //Gunship ritas
                         Raylib.DrawRectangleRec(Gunship, Color.GREEN);
                         Raylib.DrawRectangleRec(Gun1, Color.GREEN);
                         Raylib.DrawRectangleRec(Gun2, Color.GREEN);
@@ -304,8 +339,15 @@ namespace Pogram
 
                         GunshipIsSpawned = true;
 
+
+
                         if (GunshipIsSpawned == true)
                         {
+                            Vector2 healthText = Raylib.MeasureTextEx(f2, $"Gunship health{gunshipHealth}", 20, 0);
+
+                            Raylib.DrawTextEx(f2, $"Gunship health{gunshipHealth}", new Vector2(400 - healthText.X / 2, 0), 20, 0, Color.GREEN);
+
+
                             if ((GunshipX > 700 || GunshipX < 0))
                             {
                                 GunshipSpeed = -GunshipSpeed;
@@ -317,9 +359,82 @@ namespace Pogram
 
                             if (gunShoot == 1)
                             {
-                                Raylib.DrawRectangleRec(GunBullet, Color.GREEN);
+
+                                GunBullet = new Rectangle(GunshipX + 5 / 2, GunY, 5, 10);
+
+                                gunBullets.Add(GunBullet);
+                                gunShoot = 0;
+
+
+                            }
+                            else if (gunShoot == 2)
+                            {
+
+                                GunBullet = new Rectangle(GunshipX + 30 + 5 / 2, GunY, 5, 10);
+
+                                gunBullets.Add(GunBullet);
+                                gunShoot = 0;
+                            }
+                            else if (gunShoot == 3)
+                            {
+
+                                GunBullet = new Rectangle(GunshipX + 60 + 5 / 2, GunY, 5, 10);
+
+                                gunBullets.Add(GunBullet);
+
+                                gunShoot = 0;
                             }
 
+                            else if (gunShoot == 4)
+                            {
+
+                                GunBullet = new Rectangle(GunshipX + 90, GunY, 5, 10);
+
+                                gunBullets.Add(GunBullet);
+                                gunShoot = 0;
+                            }
+
+                            gunBullets.RemoveAll(b => b.y > 600);
+
+                            for (int i = 0; i < gunBullets.Count; i++)
+                            {
+                                gunBullets[i] = new Rectangle(gunBullets[i].x, gunBullets[i].y + GunBulletSpeed, 5, 10);
+
+                            }
+                            for (int i = 0; i < gunBullets.Count; i++)
+                            {
+                                Raylib.DrawRectangleRec(gunBullets[i], Color.GREEN);
+
+                            }
+
+
+
+                            foreach (var gunBullet in gunBullets)
+                            {
+                                if (Raylib.CheckCollisionRecs(gunBullet, Player))
+                                {
+                                    currentRoom = 2;
+                                }
+                            }
+
+                            foreach (var bullet in bullets)
+                            {
+                                if (Raylib.CheckCollisionRecs(bullet, Gunship))
+                                {
+                                    bulletsToRemove.Add(bullet);
+                                    bulletsToRemove.Clear();
+                                    gunshipHealth -= 1;
+                                }
+
+
+                            }
+
+
+                            if (gunshipHealth < 1)
+                            {
+                                currentRoom = 3;
+
+                            }
 
 
 
@@ -341,9 +456,30 @@ namespace Pogram
                 {
                     Raylib.DrawTexture(spaceImage, 0, 0, Color.WHITE);
 
-                    Vector2 textSize = Raylib.MeasureTextEx(f2, "Game over", 100, 0);
-                    Raylib.DrawTextEx(f2, "Game over", new Vector2(400 - textSize.X / 2, 200), 100, 0, Color.RED);
+                    Vector2 gameOverSize = Raylib.MeasureTextEx(f2, "Game over", 100, 0);
+                    Raylib.DrawTextEx(f2, "Game over", new Vector2(400 - gameOverSize.X / 2, 200), 100, 0, Color.RED);
+
+                    Vector2 pressEnterSize = Raylib.MeasureTextEx(f2, "Press enter to exit", 20, 0);
+                    Raylib.DrawTextEx(f2, "Press enter to exit", new Vector2(400 - pressEnterSize.X / 2, 300), 20, 0, Color.RED);
+                    if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+                    {
+                        Raylib.EndDrawing();
+
+                    }
                 }
+
+                else if (currentRoom == 3)
+                {
+                    Raylib.DrawTexture(spaceImage, 0, 0, Color.WHITE);
+
+                    Vector2 scoreSize = Raylib.MeasureTextEx(f2, "Score:", 20, 0);
+
+                    Raylib.DrawTextEx(f2, "Score:", new Vector2(0, 0), 20, 0, Color.GREEN);
+                    Raylib.DrawTextEx(f2, $"{InitialScore}", new Vector2(scoreSize.X, 0), 20, 0, Color.GREEN);
+
+                }
+
+
                 Raylib.EndDrawing();
 
 
