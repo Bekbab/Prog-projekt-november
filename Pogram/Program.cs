@@ -8,7 +8,7 @@ namespace Pogram
 {
 
 
-    class Invader
+    class Attacker
     {
         public bool killed = false;
         public float originalX;
@@ -16,7 +16,7 @@ namespace Pogram
         public float speed = 0.8f;
         public Rectangle enemyrect;
         public bool gameOver = false;
-        public Invader(int x, int y)
+        public Attacker(int x, int y)
         {
             this.originalX = x;
             this.originalY = y;
@@ -26,10 +26,10 @@ namespace Pogram
 
         public void Update()
         {
-            //invaders rör på sig på x axeln
+            //attackers rör på sig på x axeln
             enemyrect.x += speed;
 
-            //när invaders kolliderar med en vägg
+            //när attackers kolliderar med en vägg
             if ((enemyrect.x > originalX + 170 || enemyrect.x < originalX - 200))
             {
                 //Kommer öka speed vid varje kollision så länge den inte är större än 3
@@ -53,7 +53,7 @@ namespace Pogram
 
 
     //Fixa gunBullets
-    //Kom ihåg att göra så att när invaders.count = 0 så ska det bli en boss fight eller något.
+    //Kom ihåg att göra så att när attackers.count = 0 så ska det bli en boss fight eller något.
     //gör ett Gunship som följer efter spelarens x och skjuter en bullet med ett visst mellanrum, om man skjuter ned ett Gunship så får man mycket points, men det respawnar lite senare.
 
     class Program
@@ -66,6 +66,10 @@ namespace Pogram
 
             //random generator
             Random generator = new Random();
+            Random generator2 = new Random();
+
+
+
 
             //Floats
             float playerx = 375;
@@ -87,11 +91,14 @@ namespace Pogram
             //Int gunShoot kommer att slumpas senare så den är separat från resten av alla Ints
             int gunShoot = 1;
 
-            int gunshipHealth = 10;
+            int gunshipHealth = 100;
+
 
 
             //Bools
             bool GunshipIsSpawned = false;
+            bool GunshipIsEnraged = false;
+            bool GunshipIsDying = false;
 
             //rectangles
             Rectangle Bullet;
@@ -99,7 +106,7 @@ namespace Pogram
 
             //Listor
             List<Rectangle> bullets = new List<Rectangle>();
-            List<Invader> invaders = new List<Invader>();
+            List<Attacker> attackers = new List<Attacker>();
             List<Rectangle> gunBullets = new List<Rectangle>();
 
             //Fonts
@@ -115,18 +122,19 @@ namespace Pogram
 
 
 
-            //Invaders position fastställs. Koden är skrivit på så sätt att man bara kan ändra siffran efter (i <_) för att ändra hur många rader av invaders det ska vara.
+
+            //Attackers position fastställs. Koden är skrivit på så sätt att man bara kan ändra siffran efter (i <_) för att ändra hur många rader av attackers det ska vara.
             for (int i = 0; i < 4; i++)
             {
-                invaders.Add(new Invader(200, 20 + i * 40));
-                invaders.Add(new Invader(250, 20 + i * 40));
-                invaders.Add(new Invader(300, 20 + i * 40));
-                invaders.Add(new Invader(350, 20 + i * 40));
-                invaders.Add(new Invader(400, 20 + i * 40));
-                invaders.Add(new Invader(450, 20 + i * 40));
-                invaders.Add(new Invader(500, 20 + i * 40));
-                invaders.Add(new Invader(550, 20 + i * 40));
-                invaders.Add(new Invader(600, 20 + i * 40));
+                attackers.Add(new Attacker(200, 20 + i * 40));
+                attackers.Add(new Attacker(250, 20 + i * 40));
+                attackers.Add(new Attacker(300, 20 + i * 40));
+                attackers.Add(new Attacker(350, 20 + i * 40));
+                attackers.Add(new Attacker(400, 20 + i * 40));
+                attackers.Add(new Attacker(450, 20 + i * 40));
+                attackers.Add(new Attacker(500, 20 + i * 40));
+                attackers.Add(new Attacker(550, 20 + i * 40));
+                attackers.Add(new Attacker(600, 20 + i * 40));
 
             }
 
@@ -204,10 +212,12 @@ namespace Pogram
 
 
 
-                    //Varje gång update körs så rör invaders på sig
-                    foreach (var invader in invaders)
+
+
+                    //Varje gång update körs så rör attackers på sig
+                    foreach (var attacker in attackers)
                     {
-                        invader.Update();
+                        attacker.Update();
                     }
 
 
@@ -217,11 +227,11 @@ namespace Pogram
 
                     foreach (var bullet in bullets)
                     {
-                        foreach (var invader in invaders)
+                        foreach (var attacker in attackers)
                         {
-                            if (Raylib.CheckCollisionRecs(bullet, invader.enemyrect))
+                            if (Raylib.CheckCollisionRecs(bullet, attacker.enemyrect))
                             {
-                                invader.killed = true;
+                                attacker.killed = true;
 
                                 //bullets.Remove(bullet);
                                 bulletsToRemove.Add(bullet);
@@ -242,10 +252,10 @@ namespace Pogram
 
 
 
-                    //När invaders har kommit ned till player så går det över till game over rummet (2)
-                    foreach (var invader in invaders)
+                    //När attackers har kommit ned till player så går det över till game over rummet (2)
+                    foreach (var attacker in attackers)
                     {
-                        if (invader.enemyrect.y > playery - Player.height)
+                        if (attacker.enemyrect.y > playery - Player.height)
                         {
                             currentRoom = 2;
                         }
@@ -253,8 +263,8 @@ namespace Pogram
 
 
 
-                    //Tar bort alla invaders där killed är true
-                    invaders.RemoveAll(invader => invader.killed == true);
+                    //Tar bort alla attackers där killed är true
+                    attackers.RemoveAll(attacker => attacker.killed == true);
 
 
 
@@ -319,15 +329,15 @@ namespace Pogram
 
                     }
 
-                    foreach (var invader in invaders)
+                    foreach (var attacker in attackers)
                     {
-                        Raylib.DrawRectangleRec(invader.enemyrect, Color.GREEN);
+                        Raylib.DrawRectangleRec(attacker.enemyrect, Color.GREEN);
                     }
 
 
 
                     //Gunship kod
-                    if (invaders.Count < 1)
+                    if (attackers.Count < 1)
                     {
 
                         //Gunship ritas
@@ -353,6 +363,24 @@ namespace Pogram
                                 GunshipSpeed = -GunshipSpeed;
                             }
                             GunshipX += GunshipSpeed;
+
+                            if (gunshipHealth < 50 && GunshipIsEnraged == false)
+                            {
+                                GunshipSpeed *= 2;
+                                timerMax /= 2;
+
+                                GunshipIsEnraged = true;
+                            }
+
+                            if (gunshipHealth < 20 && GunshipIsDying == false)
+                            {
+                                GunshipSpeed /= 4;
+                                timerMax /= 2;
+
+                                GunshipIsDying = true;
+                            }
+
+
 
 
 
@@ -417,21 +445,34 @@ namespace Pogram
                                 }
                             }
 
-                            foreach (var bullet in bullets)
+
+                            for (int i = 0; i < bullets.Count; i++)
                             {
+                                Rectangle bullet = bullets[i];
+
                                 if (Raylib.CheckCollisionRecs(bullet, Gunship))
                                 {
-                                    bulletsToRemove.Add(bullet);
-                                    bulletsToRemove.Clear();
-                                    gunshipHealth -= 1;
-                                }
+                                    bullet.y = -10;
+                                    bullets[i] = bullet;
 
+                                    //slumpar damage
+                                    int randomDamage = generator2.Next(1, 6);
+
+                                    gunshipHealth -= randomDamage;
+
+                                }
 
                             }
 
 
+
+
+
+
+
                             if (gunshipHealth < 1)
                             {
+                                InitialScore += 10000;
                                 currentRoom = 3;
 
                             }
@@ -463,7 +504,7 @@ namespace Pogram
                     Raylib.DrawTextEx(f2, "Press enter to exit", new Vector2(400 - pressEnterSize.X / 2, 300), 20, 0, Color.RED);
                     if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
                     {
-                        Raylib.EndDrawing();
+                        Raylib.CloseWindow();
 
                     }
                 }
@@ -477,6 +518,12 @@ namespace Pogram
                     Raylib.DrawTextEx(f2, "Score:", new Vector2(0, 0), 20, 0, Color.GREEN);
                     Raylib.DrawTextEx(f2, $"{InitialScore}", new Vector2(scoreSize.X, 0), 20, 0, Color.GREEN);
 
+                    Vector2 youWinSize = Raylib.MeasureTextEx(f1, "You win", 70, 0);
+
+                    Raylib.DrawTextEx(f1, "You win", new Vector2(400 - youWinSize.X / 2, 140), 70, 0, Color.GREEN);
+
+                    Vector2 victorySize = Raylib.MeasureTextEx(f2, "You repelled the astro attackers and emerged victorious", 20, 0);
+                    Raylib.DrawTextEx(f2, "You repelled the astro attackers and emerged victorious", new Vector2(400 - victorySize.X / 2, 250), 20, 0, Color.GREEN);
                 }
 
 
